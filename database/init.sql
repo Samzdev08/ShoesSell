@@ -1,11 +1,9 @@
 -- ============================================================
 --  Site de vente de chaussures — Schéma de base de données
 -- ============================================================
-
 CREATE DATABASE IF NOT EXISTS chaussures_db
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
-
 USE chaussures_db;
 
 -- ─────────────────────────────────────────
@@ -23,20 +21,34 @@ CREATE TABLE users (
 );
 
 -- ─────────────────────────────────────────
---  2. CHAUSSURES
+--  2. CATEGORIES
 -- ─────────────────────────────────────────
-CREATE TABLE chaussures (
-    id          INT             NOT NULL AUTO_INCREMENT,
-    nom         VARCHAR(150)    NOT NULL,
-    prix        DECIMAL(10, 2)  NOT NULL,
-    marque      VARCHAR(100),
+CREATE TABLE categories (
+    id          INT          NOT NULL AUTO_INCREMENT,
+    nom         VARCHAR(100) NOT NULL UNIQUE,
     description TEXT,
-    created_at  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
 
 -- ─────────────────────────────────────────
---  3. TAILLE_CHAUSSURE  (stock par taille)
+--  3. CHAUSSURES
+-- ─────────────────────────────────────────
+CREATE TABLE chaussures (
+    id           INT             NOT NULL AUTO_INCREMENT,
+    categorie_id INT             NOT NULL,
+    nom          VARCHAR(150)    NOT NULL,
+    prix         DECIMAL(10, 2)  NOT NULL,
+    marque       VARCHAR(100),
+    description  TEXT,
+    created_at   DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    CONSTRAINT fk_chaussure_categorie
+        FOREIGN KEY (categorie_id) REFERENCES categories(id)
+        ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- ─────────────────────────────────────────
+--  4. TAILLE_CHAUSSURE  (stock par taille)
 -- ─────────────────────────────────────────
 CREATE TABLE taille_chaussure (
     id            INT           NOT NULL AUTO_INCREMENT,
@@ -50,7 +62,7 @@ CREATE TABLE taille_chaussure (
 );
 
 -- ─────────────────────────────────────────
---  4. COMMANDES
+--  5. COMMANDES
 -- ─────────────────────────────────────────
 CREATE TABLE commandes (
     id             INT            NOT NULL AUTO_INCREMENT,
@@ -66,7 +78,7 @@ CREATE TABLE commandes (
 );
 
 -- ─────────────────────────────────────────
---  5. COMMANDE_ITEMS
+--  6. COMMANDE_ITEMS
 -- ─────────────────────────────────────────
 CREATE TABLE commande_items (
     id            INT            NOT NULL AUTO_INCREMENT,
@@ -85,7 +97,7 @@ CREATE TABLE commande_items (
 );
 
 -- ─────────────────────────────────────────
---  6. WISHLIST
+--  7. WISHLIST
 -- ─────────────────────────────────────────
 CREATE TABLE wishlist (
     id            INT      NOT NULL AUTO_INCREMENT,
@@ -111,45 +123,62 @@ CREATE TABLE wishlist (
 --  USERS
 -- ─────────────────────────────────────────
 INSERT INTO users (nom, prenom, email, adresse, mot_de_passe) VALUES
-('Dupont',   'Alice',   'alice.dupont@email.com',   '12 rue des Lilas, Paris',        '$2y$10$abc123hashedpassword1'),
-('Martin',   'Bruno',   'bruno.martin@email.com',   '5 avenue Foch, Lyon',            '$2y$10$abc123hashedpassword2'),
-('Bernard',  'Clara',   'clara.bernard@email.com',  '8 boulevard Victor, Marseille',  '$2y$10$abc123hashedpassword3'),
-('Leroy',    'David',   'david.leroy@email.com',    '3 impasse des Roses, Bordeaux',  '$2y$10$abc123hashedpassword4'),
-('Petit',    'Emma',    'emma.petit@email.com',     '21 rue du Moulin, Lille',        '$2y$10$abc123hashedpassword5');
+('Dupont',  'Alice', 'alice.dupont@email.com',  '12 rue des Lilas, Paris',       '$2y$10$abc123hashedpassword1'),
+('Martin',  'Bruno', 'bruno.martin@email.com',  '5 avenue Foch, Lyon',           '$2y$10$abc123hashedpassword2'),
+('Bernard', 'Clara', 'clara.bernard@email.com', '8 boulevard Victor, Marseille', '$2y$10$abc123hashedpassword3'),
+('Leroy',   'David', 'david.leroy@email.com',   '3 impasse des Roses, Bordeaux', '$2y$10$abc123hashedpassword4'),
+('Petit',   'Emma',  'emma.petit@email.com',    '21 rue du Moulin, Lille',       '$2y$10$abc123hashedpassword5');
 
 -- ─────────────────────────────────────────
---  CHAUSSURES
+--  CATEGORIES
 -- ─────────────────────────────────────────
-INSERT INTO chaussures (nom, prix, marque, description) VALUES
-('Air Max 90',          120.00, 'Nike',    'Sneaker iconique avec amorti Air visible.'),
-('Stan Smith',           89.99, 'Adidas',  'Classique en cuir blanc avec détails verts.'),
-('Old Skool',            75.00, 'Vans',    'Chaussure skate avec bande latérale signature.'),
-('Chuck Taylor All Star', 65.00, 'Converse','Toile montante, semelle caoutchouc.'),
-('Runner R100',         109.90, 'Puma',    'Running légère avec semelle EVA.'),
-('Ultraboost 22',       180.00, 'Adidas',  'Running haut de gamme avec technologie Boost.'),
-('Air Force 1',         100.00, 'Nike',    'Basket low en cuir, style urbain classique.'),
-('Gel-Nimbus 24',       160.00, 'Asics',   'Running longue distance, amorti maximal.');
+INSERT INTO categories (id, nom, description) VALUES
+(1, 'Running',   'Chaussures conçues pour la course à pied, légères et amorties.'),
+(2, 'Sneakers',  'Baskets lifestyle pour un usage quotidien casual.'),
+(3, 'Skate',     'Chaussures renforcées pour la pratique du skateboard.'),
+(4, 'Basketball','Chaussures montantes avec soutien de la cheville.'),
+(5, 'Trail',     'Chaussures robustes pour les sentiers et terrains accidentés.'),
+(6, 'Tennis',    'Chaussures stables et latéralement renforcées pour le tennis.');
+
+-- ─────────────────────────────────────────
+--  CHAUSSURES  (sans image, avec categorie_id)
+-- ─────────────────────────────────────────
+INSERT INTO chaussures (id, categorie_id, nom, prix, marque, description) VALUES
+(1, 2, 'Air Max 90',            120.00, 'Nike',    'Sneaker iconique avec amorti Air visible.'),
+(2, 2, 'Stan Smith',             89.99, 'Adidas',  'Classique en cuir blanc avec détails verts.'),
+(3, 3, 'Old Skool',              75.00, 'Vans',    'Chaussure skate avec bande latérale signature.'),
+(4, 4, 'Chuck Taylor All Star',  65.00, 'Converse','Toile montante, semelle caoutchouc.'),
+(5, 1, 'Runner R100',           109.90, 'Puma',    'Running légère avec semelle EVA.'),
+(6, 1, 'Ultraboost 22',         180.00, 'Adidas',  'Running haut de gamme avec technologie Boost.'),
+(7, 2, 'Air Force 1',           100.00, 'Nike',    'Basket low en cuir, style urbain classique.'),
+(8, 1, 'Gel-Nimbus 24',         160.00, 'Asics',   'Running longue distance, amorti maximal.'),
+(9, 5, 'Speedcross 5',          130.00, 'Salomon', 'Trail running avec crampons agressifs.'),
+(10,6, 'Barricade 13',          140.00, 'Adidas',  'Tennis compétition, stabilité maximale.');
 
 -- ─────────────────────────────────────────
 --  TAILLE_CHAUSSURE
 -- ─────────────────────────────────────────
 INSERT INTO taille_chaussure (chaussure_id, taille, stock) VALUES
--- Air Max 90
+-- Air Max 90 (Sneakers)
 (1, 39.0, 5), (1, 40.0, 8), (1, 41.0, 10), (1, 42.0, 7), (1, 43.0, 4), (1, 44.0, 3),
--- Stan Smith
+-- Stan Smith (Sneakers)
 (2, 38.0, 6), (2, 39.0, 9), (2, 40.0, 11), (2, 41.0, 8), (2, 42.0, 5),
--- Old Skool
+-- Old Skool (Skate)
 (3, 37.0, 4), (3, 38.0, 7), (3, 39.0, 9), (3, 40.0, 6), (3, 41.0, 3),
--- Chuck Taylor
+-- Chuck Taylor (Basketball)
 (4, 36.0, 5), (4, 37.0, 8), (4, 38.0, 10), (4, 39.0, 7), (4, 40.0, 4),
--- Runner R100
+-- Runner R100 (Running)
 (5, 40.0, 6), (5, 41.0, 9), (5, 42.0, 8), (5, 43.0, 5), (5, 44.0, 2),
--- Ultraboost 22
+-- Ultraboost 22 (Running)
 (6, 40.0, 3), (6, 41.0, 5), (6, 42.0, 7), (6, 43.0, 4),
--- Air Force 1
+-- Air Force 1 (Sneakers)
 (7, 39.0, 8), (7, 40.0, 10), (7, 41.0, 9), (7, 42.0, 6), (7, 43.0, 3),
--- Gel-Nimbus 24
-(8, 40.0, 4), (8, 41.0, 6), (8, 42.0, 5), (8, 43.0, 3), (8, 44.0, 2);
+-- Gel-Nimbus 24 (Running)
+(8, 40.0, 4), (8, 41.0, 6), (8, 42.0, 5), (8, 43.0, 3), (8, 44.0, 2),
+-- Speedcross 5 (Trail)
+(9, 39.0, 4), (9, 40.0, 6), (9, 41.0, 8), (9, 42.0, 5), (9, 43.0, 3),
+-- Barricade 13 (Tennis)
+(10, 39.0, 3), (10, 40.0, 5), (10, 41.0, 7), (10, 42.0, 4), (10, 43.0, 2);
 
 -- ─────────────────────────────────────────
 --  COMMANDES
