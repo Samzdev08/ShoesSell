@@ -2,45 +2,44 @@
     <div class="card shadow-lg border-0 rounded-4" style="width: 100%; max-width: 420px;">
         <div class="card-body p-5">
 
-            <!-- Logo / Titre -->
             <div class="text-center mb-4">
                 <h1 class="fw-bold fs-3 mb-1">👟 SoleShop</h1>
                 <h2 class="fs-5 fw-semibold mb-1">Connexion</h2>
                 <p class="text-muted small">Accédez à votre compte SoleShop</p>
             </div>
 
-            <!-- Message d'erreur -->
+            
             <?php if (isset($error)) : ?>
                 <div class="alert alert-danger d-flex align-items-center gap-2 py-2 px-3 rounded-3" role="alert">
                     <i class="bi bi-exclamation-circle-fill"></i>
-                    <span><?= htmlspecialchars($error) ?></span>
+                    <span><?= $error ?></span>
                 </div>
             <?php endif; ?>
 
-            <!-- Formulaire -->
+            
             <form action="/auth/login/post" method="post">
 
                 <div class="mb-3">
-                    <label for="email" class="form-label fw-medium">Email</label>
+                    <label for="email" class="form-label fw-semibold">Email</label>
                     <input
                         type="email"
                         id="email"
                         name="email"
                         class="form-control form-control-lg rounded-3"
                         placeholder="exemple@email.com"
-                        required
+                        value="<?= $old_post['email'] ?>"
                     >
                 </div>
 
                 <div class="mb-4">
-                    <label for="password" class="form-label fw-medium">Mot de passe</label>
+                    <label for="password" class="form-label fw-semibold">Mot de passe</label>
                     <input
                         type="password"
                         id="password"
                         name="password"
                         class="form-control form-control-lg rounded-3"
                         placeholder="••••••••"
-                        required
+                        
                     >
                 </div>
 

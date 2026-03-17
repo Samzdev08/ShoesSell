@@ -1,5 +1,4 @@
 <?php
-session_start();
 $flash = $_SESSION['flash'] ?? [];
 unset($_SESSION['flash']);
 ?>
@@ -35,7 +34,7 @@ unset($_SESSION['flash']);
                     <ul class="navbar-nav ms-auto">
 
                         <li class="nav-item">
-                            <a class="nav-link" href="/">Catalogue</a>
+                            <a class="nav-link" href="/catalogue">Catalogue</a>
                         </li>
 
                         <?php if (isset($_SESSION['user_id'])) : ?>
@@ -45,7 +44,7 @@ unset($_SESSION['flash']);
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" href="/panier">Panier</a>
+                                <a class="nav-link" href="/panier/">Panier</a>
                             </li>
 
                             <li class="nav-item">

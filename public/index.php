@@ -6,6 +6,7 @@ use Slim\Factory\AppFactory;
 
 $app = AppFactory::create();
 $app->addErrorMiddleware(true, true, true);
+$app->add(\App\Middleware\SessionMiddleware::class);
 
 
 require __DIR__ . '/../config/routes.php';

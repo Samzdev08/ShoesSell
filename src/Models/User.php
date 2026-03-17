@@ -27,6 +27,19 @@ class User
         $this->password = $password;
     }
 
+    public static function  verifyEmail($email)
+    {
+        $db = Database::getInstance()->getConnection();
+        $stmt = $db->prepare('SELECT * FROM ' . self::$table . ' WHERE email = :email');
+        $stmt->execute(['email' => $email]);
+        $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if($stmt->rowCount() > 0){
+            return true;
+        }
+        return false;
+    }
+
     public static function create($array)
     {
         $db = Database::getInstance()->getConnection();
@@ -40,6 +53,34 @@ class User
         ]);
 
         return $db->lastInsertId();
+    }
+
+    public static function find($id)
+    {
+        $db = Database::getInstance()->getConnection();
+        $stmt = $db->prepare('SELECT * FROM ' . self::$table . ' WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+
+    public static function login($array)
+    {
+        $db = Database::getInstance()->getConnection();
+        $stmt = $db->prepare('SELECT * FROM ' . self::$table . ' WHERE email = :email');
+        $stmt->execute(['email' => $array['email']]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user) {
+            
+            if (password_verify($array['password'], $user['mot_de_passe'])) {
+
+                return ['success' => true, 'user' => $user];
+            }
+            return ['success' => false, 'message' => 'Mot de passe incorrect.'];
+
+        }
+        return ['success' => false, 'message' => 'Adresse email non trouvée.', ];
     }
     
 }

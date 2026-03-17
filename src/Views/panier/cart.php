@@ -1,71 +1,102 @@
 
-<div class="page">
-    <h1>Mon Panier</h1>
+<div class="container py-5">
+    <h1 class="fw-bold mb-4">Mon Panier</h1>
 
-    <div class="layout">
-
-        <!-- Tableau articles -->
-        <div class="cart-card">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Article</th>
-                        <th>Taille</th>
-                        <th>Qté</th>
-                        <th>Sous-total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="item-row">
-                        <td>
-                            <div class="item-info">
-                                <div class="item-thumb">👟</div>
-                                <div>
-                                    <p class="item-name">AirMax Pro 2024</p>
-                                    <p class="item-price">189.90 CHF / paire</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="taille-badge">40</span></td>
-                        <td>
-                            <div class="qty-wrap">
-                                <input type="number" class="qty-input" value="1" min="1">
-                            </div>
-                        </td>
-                        <td class="subtotal-cell">
-                            <p class="subtotal">189.90 CHF</p>
-                            <button class="retirer">✕ Retirer</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="cart-footer">
-                <button class="btn-clear">Vider le panier</button>
+    <?php if (empty($cart)) : ?>
+        <div class="card shadow-sm">
+            <div class="card-body text-center py-5">
+                <div class="fs-1 mb-3">🛒</div>
+                <h2 class="fw-bold fs-4 mb-2">Votre panier est vide</h2>
+                <p class="text-muted mb-4">Découvrez notre catalogue et ajoutez des chaussures à votre panier.</p>
+                <a href="/catalogue" class="btn btn-dark">Voir le catalogue</a>
             </div>
         </div>
 
-        <!-- Récapitulatif -->
-        <div class="recap-card">
-            <h2>Récapitulatif</h2>
+    <?php else : ?>
+        <div class="row g-4 align-items-start">
 
-            <div class="recap-row">
-                <span>AirMax Pro 2024 (×1)</span>
-                <span>189.90 CHF</span>
+            <!-- Tableau articles -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-body p-0">
+                        <table class="table table-borderless align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Article</th>
+                                    <th>Taille</th>
+                                    <th>Qté</th>
+                                    <th>Sous-total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($cart as $i => $item) : ?>
+                                    <tr class="border-top">
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="fs-2">👟</div>
+                                                <div>
+                                                    <p class="fw-semibold mb-0"><?= $item['marque'] ?> - <?= $item['nom'] ?></p>
+                                                    <small class="text-muted">Prix unitaire : <?= $item['prix'] ?> CHF</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-dark"><?= $item['taille'] ?></span>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="quantite" value="<?= $item['quantite'] ?>" min="1" class="form-control form-control-sm" style="width: 70px;">
+                                        </td>
+                                        <td class="fw-semibold">
+                                            <?= $item['prix'] * $item['quantite'] ?> CHF
+                                        </td>
+                                        <td>
+                                            <a href="/panier/remove/<?= $i ?>" class="btn btn-outline-danger btn-sm">✕</a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer bg-white d-flex justify-content-end gap-2">
+                        <a href="/panier/vider" class="btn btn-outline-secondary btn-sm btn-clear">Vider le panier</a>
+                        <button type="submit" class="btn btn-outline-primary btn-sm">Mettre à jour</button>
+                    </div>
+                </div>
             </div>
 
-            <div class="recap-total">
-                <span>Total</span>
-                <span>189.90 CHF</span>
-            </div>
-            <p class="recap-note">Livraison calculée à la commande</p>
+            <!-- Récapitulatif -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-4">Récapitulatif</h5>
 
-            <button class="btn-commander">Commander →</button>
-            <button class="btn-continuer">Continuer mes achats</button>
+                        <?php foreach ($cart as $item) : ?>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted"><?= $item['nom'] ?> (×<?= $item['quantite'] ?>)</span>
+                                <span><?= $item['prix'] * $item['quantite'] ?> CHF</span>
+                            </div>
+                        <?php endforeach; ?>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between fw-bold fs-5 mb-2">
+                            <span>Total</span>
+                            <span>
+                                <?= array_sum(array_map(fn($i) => $i['prix'] * $i['quantite'], $cart)) ?> CHF
+                            </span>
+                        </div>
+
+                        <p class="text-muted small mb-4">Livraison calculée à la commande</p>
+
+                        <div class="d-grid gap-2">
+                            <a href="/commande/checkout" class="btn btn-dark">Commander →</a>
+                            <a href="/catalogue" class="btn btn-outline-secondary">Continuer mes achats</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
-
-    </div>
+    <?php endif; ?>
 </div>
-
-</body>
-</html>

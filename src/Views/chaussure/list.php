@@ -1,46 +1,69 @@
-<div class="list-shoes-container">
-    <h1>Catalogue des chaussures</h1>
-    <div class="filter-side">
-        <h2>Categorie</h2>
-        <ul>
-            <li class="filter" value="all">Toutes les categories</li>
-            <li class="filter" value="running">Running</li>
-            <li class="filter" value="casual">Casual</li>
-            <li class="filter" value="formal">Formal</li>
-            <li class="filter" value="sport">Sport</li>
-            <li class="filter" value="skate">Skate</li>
-            <li class="filter" value="basketball">Basketball</li>
-            <li class="filter" value="trail">Trail</li>
-            <li class="filter" value="tennis">Tennis</li>
-        </ul>
-    </div>
-    <div class="list-shoes">
-        <div class="header-list">
-            <div class="search-container">
-                <input type="text" placeholder="Rechercher...">
-                <button class="search">🔍</button>
-            </div>
-            <div class="result-numb">
-                <p><?= count($chaussures) ?> : résultat(s) </p>
+<div class="container py-5">
+    <h1 class="fw-bold mb-4">Catalogue des chaussures</h1>
+    <div class="row g-4">
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold mb-3">Catégorie</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li><a class="filter d-block py-1 text-decoration-none text-dark" value="all">Toutes les catégories</a></li>
+                        <li><a class="filter d-block py-1 text-decoration-none text-dark" value="running">Running</a></li>
+                        <li><a class="filter d-block py-1 text-decoration-none text-dark" value="casual">Casual</a></li>
+                        <li><a class="filter d-block py-1 text-decoration-none text-dark" value="formal">Formal</a></li>
+                        <li><a class="filter d-block py-1 text-decoration-none text-dark" value="sport">Sport</a></li>
+                        <li><a class="filter d-block py-1 text-decoration-none text-dark" value="skate">Skate</a></li>
+                        <li><a class="filter d-block py-1 text-decoration-none text-dark" value="basketball">Basketball</a></li>
+                        <li><a class="filter d-block py-1 text-decoration-none text-dark" value="trail">Trail</a></li>
+                        <li><a class="filter d-block py-1 text-decoration-none text-dark" value="tennis">Tennis</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-        <div class="content-list">
+
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4 gap-3">
+                <div class="input-group w-50">
+                    <input type="text" class="form-control" placeholder="Rechercher...">
+                    <button class="btn btn-outline-secondary search">🔍</button>
+                </div>
+                <p class="mb-0 text-muted"><?= count($chaussures) ?> résultat(s)</p>
+            </div>
+
             <?php if ($chaussures): ?>
-                <div class="chaussures-list">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
                     <?php foreach ($chaussures as $chaussure): ?>
-                        <div class="chaussure-item" data-id="<?= $chaussure['id'] ?>">
-                            <div class="emoji">👟</div>
-                            <h2><?= $chaussure['marque'] ?></h2>
-                            <p> <?= $chaussure['nom'] ?> </p>
-                            <p><?= $chaussure['prix'] ?> .-</p>
-                            <p> <?php if ($chaussure['en_stock']): ?>  ● En stock <?php else: ?> ● En rupture de stock <?php endif; ?> </p>
+                        <div class="col">
+                            <div class="card h-100 shadow-sm chaussure-item" data-id="<?= $chaussure['id'] ?>" style="cursor: pointer;">
+                                <div class="card-body text-center">
+                                    <div class="fs-1 mb-2">👟</div>
+                                    <h5 class="card-title fw-bold"><?= $chaussure['marque'] ?></h5>
+                                    <p class="card-text text-muted"><?= $chaussure['nom'] ?></p>
+                                    <p class="card-text fw-semibold"><?= $chaussure['prix'] ?> .-</p>
+                                    <p class="card-text">
+                                        <?php if ($chaussure['en_stock']): ?>
+                                            <span class="text-success">● En stock</span>
+                                        <?php else: ?>
+                                            <span class="text-danger">● En rupture de stock</span>
+                                        <?php endif; ?>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
             <?php else: ?>
-                <p>Aucune chaussure trouvée.</p>
+                <p class="text-muted">Aucune chaussure trouvée.</p>
             <?php endif; ?>
         </div>
+
     </div>
 </div>
-</div>
+<script>
+    document.querySelectorAll('.chaussure-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const id = item.getAttribute('data-id');
+            window.location.href = `/chaussure/${id}`;
+        });
+    });
+</script>

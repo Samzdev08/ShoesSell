@@ -10,6 +10,16 @@ use App\Models\User;
 
 class AuthController
 {
+    public function renderResponse(Response $response, string $error, array $old_post = [], string $file =  'register')
+    {
+        $view = new PhpRenderer(__DIR__ . '/../Views', [
+            'title' => 'Inscription',
+            'error' => $error ?? null,
+            'old_post' => $old_post,
+        ]);
+        $view->setLayout('layout/index.php');
+        return $view->render($response, 'auth/' .$file. '.php');
+    }
 
     public function showLoginForm(Request $request, Response $response)
     {
@@ -32,15 +42,35 @@ class AuthController
 
     public function login(Request $request, Response $response)
     {
+        $data = filter_input_array(INPUT_POST, [
+            'email' => FILTER_SANITIZE_EMAIL,
+            'password' => FILTER_SANITIZE_SPECIAL_CHARS,
+        ]);
 
+        $errors = [];
 
-        $_SESSION['success'] = 'Vous êtes connecté avec succès.';
+        if (empty($data['email']) || empty($data['password'])) {
+            $errors[] = 'Tous les champs sont obligatoires.';
+        }
+
+        if (!empty($errors)) {
+
+           return $this->renderResponse($response, $errors[0], $_POST, 'login');
+        }
+
+        $loginResult = User::login($data);
+
+        if (!$loginResult['success']) {
+            return $this->renderResponse($response, $loginResult['message'], $_POST, 'login');
+        }
+
+        $_SESSION['user_id'] = $loginResult['user']['id'];
+        $_SESSION['flash']['success'] = 'Vous êtes connecté avec succès.';
         return $response->withHeader('Location', '/')->withStatus(302);
     }
 
     public function register(Request $request, Response $response)
     {
-
         $data = filter_input_array(INPUT_POST, [
             'nom' => FILTER_SANITIZE_SPECIAL_CHARS,
             'prenom' => FILTER_SANITIZE_SPECIAL_CHARS,
@@ -72,50 +102,43 @@ class AuthController
             $errors[] = 'Le prénom ne doit pas contenir de chiffres ou de caractères spéciaux.';
         }
 
-
         if ($data['password'] !== $data['password_verify']) {
             $errors[] = 'Les mots de passe ne correspondent pas.';
         }
 
+
         if (!empty($errors)) {
-
-        var_dump($errors);
-
-            $view = new PhpRenderer(__DIR__ . '/../Views', [
-                'title' => 'Inscription',
-                'error' => $errors[0],
-                'old_post' => $_POST,
-            ]);
-            $view->setLayout('layout/index.php');
-            return $view->render($response, 'auth/register.php');
-
-        } else {
-
-            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
-
-            $lastInsertId = User::create($data);
-
-            if (!$lastInsertId) {
-                $view = new PhpRenderer(__DIR__ . '/../Views', [
-                    'title' => 'Inscription',
-                    'error' => 'Une erreur est survenue lors de la création du compte.',
-                    'old_post' => $_POST,
-                ]);
-                $view->setLayout('layout/index.php');
-                return $view->render($response, 'auth/register.php');
-            } 
-            else {
-                $_SESSION['flash']['success'] = 'Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter.';
-                return $response->withHeader('Location', '/auth/login')->withStatus(302);
-            }
+            return $this->renderResponse($response, $errors[0], $_POST);
         }
+
+
+        if (User::verifyEmail($data['email'])) {
+            return $this->renderResponse($response, 'Cette adresse email est déjà utilisée.', $_POST);
+        }
+
+
+        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        $lastInsertId = User::create($data);
+
+
+        if (!$lastInsertId) {
+            return $this->renderResponse($response, 'Une erreur est survenue lors de la création du compte.', $_POST);
+        }
+
+
+        $_SESSION['flash']['success'] = 'Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter.';
+        return $response->withHeader('Location', '/auth/login')->withStatus(302);
     }
 
 
     public function logout(Request $request, Response $response)
     {
+
+        $_SESSION['flash']['success'] = 'Vous avez été déconnecté avec succès.';
         session_destroy();
-        $_SESSION['success'] = 'Vous avez été déconnecté avec succès.';
+        session_start();
+        $_SESSION['flash']['success'] = 'Vous avez été déconnecté avec succès.';
         return $response->withHeader('Location', '/')->withStatus(302);
     }
+
 }
