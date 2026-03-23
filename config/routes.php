@@ -6,7 +6,9 @@ use Slim\Views\PhpRenderer;
 use App\Controllers\ChaussureController;
 use App\Controllers\AuthController;
 use App\Controllers\PanierController;
+use App\Controllers\UserController;
 use App\Controllers\CommandeController;
+use App\Controllers\WishlistController;
 
 $app->get('/', ChaussureController::class);
 $app->get('/catalogue', [ChaussureController::class, 'list']);
@@ -29,3 +31,21 @@ $group = $app->group('/panier', function ($group) {
 })->add(new App\Middleware\AuthMiddleware());
 
 $app->get('/commande/checkout', [CommandeController::class, 'checkout'])->add(new App\Middleware\AuthMiddleware());
+$app->post('/commande/add', [CommandeController::class, 'addOrder'])->add(new App\Middleware\AuthMiddleware());
+
+$group = $app->group('/profil', function ($group) {
+    $group->get('/', [UserController::class, 'profile']);
+    $group->post('/update', [UserController::class, 'updateProfile']);
+    $group->post('/update-password', [UserController::class, 'changePassword']);
+    $group->get('/orders', [UserController::class, 'orderHistory']);
+    $group->get('/orders/{id}', [UserController::class, 'orderDetails']);
+    $group->get('/delete', [UserController::class, 'deleteAccount']);
+})->add(new App\Middleware\AuthMiddleware());
+
+$group = $app->group('/wishlist', function ($group) {
+    
+    $group->get('/', [WishlistController::class, 'wishlist']);
+    $group->post('/add', [WishlistController::class, 'addToWishlist']);
+    $group->post('/remove', [WishlistController::class, 'removeFromWishlist']);
+
+})->add(new App\Middleware\AuthMiddleware());

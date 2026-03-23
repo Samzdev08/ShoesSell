@@ -16,6 +16,8 @@ unset($_SESSION['flash']);
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -40,7 +42,7 @@ unset($_SESSION['flash']);
                         <?php if (isset($_SESSION['user_id'])) : ?>
 
                             <li class="nav-item">
-                                <a class="nav-link" href="/compte">Mon compte</a>
+                                <a class="nav-link" href="/profil/">Mon compte</a>
                             </li>
 
                             <li class="nav-item">

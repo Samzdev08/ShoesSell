@@ -5,9 +5,8 @@
 
         <!-- Formulaire livraison -->
         <div class="col-lg-7">
-            <form action="/commande/passer" method="POST">
+            <form action="/commande/add" method="POST">
 
-                <!-- Informations de livraison -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-body">
                         <h5 class="fw-bold mb-4">📦 Adresse de livraison</h5>
@@ -15,72 +14,44 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Nom</label>
-                                <input type="text" name="nom" class="form-control" value="<?= $user['nom'] ?>" >
+                                <input type="text" name="nom" class="form-control" value="<?= $user['nom'] ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Prénom</label>
-                                <input type="text" name="prenom" class="form-control" value="<?= $user['prenom']?>" >
+                                <input type="text" name="prenom" class="form-control" value="<?= $user['prenom'] ?>" required>
                             </div>
                             <div class="col-12">
-                                <label class="form-label fw-semibold">Adresse</label>
-                                <input type="text" name="adresse" class="form-control" value="<?= $user['adresse']?>" >
+                                <label class="form-label fw-semibold">Adresse (rue + numéro)</label>
+                                <input type="text" name="shipping_adresse" class="form-control" value="<?= $user['adresse'] ?>" required>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Ville</label>
-                                <input type="text" name="ville" class="form-control"  >
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">NPA</label>
+                                <input type="text" name="shipping_npa" class="form-control" placeholder="1000" pattern="[0-9]{4}" required>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Code postal</label>
-                                <input type="text" name="code_postal" class="form-control" >
+                            <div class="col-md-8">
+                                <label class="form-label fw-semibold">Localité</label>
+                                <input type="text" name="shipping_ville" class="form-control" placeholder="Genève" required>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
-                        <h5 class="fw-bold mb-4">💳 Paiement</h5>
-
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">Numéro de carte</label>
-                                <input type="text" name="carte" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Date d'expiration</label>
-                                <input type="text" name="expiration" class="form-control" placeholder="MM/AA" maxlength="5" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">CVV</label>
-                                <input type="text" name="cvv" class="form-control" placeholder="123" maxlength="3" required>
-                            </div>
-                        </div>
-
-                        <div class="d-flex gap-3 mt-3 text-muted small">
-                            <span>💳 Visa</span>
-                            <span>💳 Mastercard</span>
-                            <span>💳 American Express</span>
-                        </div>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-dark btn-lg w-100">Confirmer la commande →</button>
+                <button type="submit" class="btn btn-dark btn-lg w-100">✓ Confirmer la commande →</button>
             </form>
         </div>
 
         <!-- Récapitulatif commande -->
         <div class="col-lg-5">
-            <div class="card shadow-sm">
+            <div class="card shadow-sm" style="position: sticky; top: 88px;">
                 <div class="card-body">
-                    <h5 class="fw-bold mb-4">🧾 Récapitulatif</h5>
+                    <h5 class="fw-bold mb-4">🧾 Votre commande</h5>
 
                     <?php foreach ($cart as $item) : ?>
                         <div class="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom">
                             <div class="fs-3">👟</div>
                             <div class="flex-grow-1">
                                 <p class="fw-semibold mb-0"><?= $item['marque'] ?> - <?= $item['nom'] ?></p>
-                                <small class="text-muted">Taille <?= $item['taille'] ?> · Qté <?= $item['quantite'] ?></small>
+                                <small class="text-muted">Taille <?= $item['taille'] ?> × <?= $item['quantite'] ?></small>
                             </div>
                             <span class="fw-semibold"><?= $item['prix'] * $item['quantite'] ?> CHF</span>
                         </div>
@@ -97,14 +68,19 @@
 
                     <hr>
 
-                    <div class="d-flex justify-content-between fw-bold fs-5">
+                    <div class="d-flex justify-content-between fw-bold fs-5 mb-4">
                         <span>Total</span>
                         <span><?= array_sum(array_map(fn($i) => $i['prix'] * $i['quantite'], $cart)) ?> CHF</span>
                     </div>
 
-                    <div class="d-flex justify-content-between text-muted small mt-4 border-top pt-3">
+                    <div class="alert alert-warning d-flex gap-2 align-items-start py-2 px-3 mb-3">
+                        <span>💵</span>
+                        <small>Le paiement s'effectue lors de la récupération du colis.</small>
+                    </div>
+
+                    <div class="d-flex justify-content-between text-muted small border-top pt-3">
                         <span>📦 Livraison 2–4 jours</span>
-                        <span>🔒 Paiement sécurisé</span>
+                        <span>✅ Commande sécurisée</span>
                     </div>
                 </div>
             </div>

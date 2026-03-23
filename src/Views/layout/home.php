@@ -36,7 +36,20 @@
                 <?php foreach ($chaussures as $chaussure): ?>
                     <div class="col">
                         <div class="card h-100 shadow-sm chaussure-item" data-id="<?= $chaussure['id'] ?>" style="cursor: pointer;">
-                            <div class="card-body text-center">
+                            <div class="card-body text-center position-relative">
+
+                                <!-- Bouton wishlist -->
+                                <form method="POST" action="/wishlist/add" class="position-absolute top-0 end-0 m-2">
+                                    <input type="hidden" name="chaussure_id" value="<?= $chaussure['id'] ?>">
+                                    <button type="submit"
+                                        class="btn btn-sm border-0 p-1 wishlist-btn"
+                                        onclick="event.stopPropagation()"
+                                        title="<?= $chaussure['in_wishlist'] ? 'Retirer de la wishlist' : 'Ajouter à la wishlist' ?>">
+                                        <i class="fa-<?= $chaussure['in_wishlist'] ? 'solid' : 'regular' ?> fa-heart"
+                                            style="color: <?= $chaussure['in_wishlist'] ? '#dc3545' : '#adb5bd' ?>; font-size: 1.1rem;"></i>
+                                    </button>
+                                </form>
+
                                 <div class="fs-1 mb-3">👟</div>
                                 <h5 class="card-title fw-bold"><?= $chaussure['marque'] ?></h5>
                                 <p class="card-text text-muted"><?= $chaussure['nom'] ?></p>

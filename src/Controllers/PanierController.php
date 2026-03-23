@@ -11,7 +11,7 @@ class PanierController
 {
     public function addCart(Request $request, Response $response)
     {
-        if (isset($_SESSION['cart'])) $_SESSION['cart'] = [];
+        if (!isset($_SESSION['cart'])) $_SESSION['cart'] = [];
 
         $data = $request->getParsedBody();
 

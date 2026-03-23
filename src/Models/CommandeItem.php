@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+
+require_once __DIR__ . '/../../config/database.php';
+
 use App\Services\Database;
 use PDO;
 
@@ -27,14 +30,26 @@ class CommandeItem
     public static function create($array, $commande_id)
     {
         $db = Database::getInstance()->getConnection();
-        $stmt = $db->prepare('INSERT INTO commande_items (commande_id, produit_id, quantite, prix_unitaire) VALUES (:commande_id, :produit_id, :quantite, :prix_unitaire)');
+        $stmt = $db->prepare('INSERT INTO commande_items (commande_id, chaussure_id, taille, quantite, prix) 
+                          VALUES (:commande_id, :chaussure_id, :taille, :quantite, :prix)');
         $stmt->execute([
-            'commande_id' => $commande_id,
-            'produit_id' => $array['produit_id'],
-            'quantite' => $array['quantite'],
-            'prix_unitaire' => $array['prix_unitaire']
+            'commande_id'  => $commande_id,
+            'chaussure_id' => $array['chaussure_id'],
+            'taille'       => $array['taille'],
+            'quantite'     => $array['quantite'],
+            'prix'         => $array['prix'],
         ]);
 
         return $db->lastInsertId();
+    }
+    public static function getItemsByCommandeId($commande_id)
+    {
+        $db = Database::getInstance()->getConnection();
+        $stmt = $db->prepare('SELECT ci.*, c.nom AS chaussure_nom, c.marque AS chaussure_marque
+                              FROM commande_items ci
+                              JOIN chaussures c ON ci.chaussure_id = c.id
+                              WHERE ci.commande_id = :commande_id');
+        $stmt->execute(['commande_id' => $commande_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
