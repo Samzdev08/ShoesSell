@@ -27,7 +27,7 @@ class TailleChaussure
     public static function getSizeChaussureById($id_chaussure)
     {
         $db = Database::getInstance()->getConnection();
-        $stmt = $db->prepare('SELECT * FROM ' . self::$table . ' WHERE chaussure_id = :id_chaussure');
+        $stmt = $db->prepare('SELECT * FROM ' . self::$table . ' WHERE chaussure_id = :id_chaussure AND stock >= 1');
         $stmt->execute(['id_chaussure' => $id_chaussure]);
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

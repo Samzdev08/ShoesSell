@@ -65,6 +65,7 @@ class AuthController
         }
 
         $_SESSION['user_id'] = $loginResult['user']['id'];
+        $_SESSION['user_role'] = $loginResult['user']['role'];
         $_SESSION['flash']['success'] = 'Vous êtes connecté avec succès.';
         return $response->withHeader('Location', '/')->withStatus(302);
     }

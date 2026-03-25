@@ -30,11 +30,13 @@ class WishlistController
             Wishlist::addToWishlist($_SESSION['user_id'], $data['chaussure_id']);
             $_SESSION['flash']['success'] = 'Produit ajouté à la wishlist avec succès.';
         } else {
-            $_SESSION['flash']['error'] = 'Produit déjà dans la wishlist.';
+            Wishlist::removeFromWishlist($_SESSION['user_id'], $data['chaussure_id']);
+            $_SESSION['flash']['error'] = 'Produit retiré de la wishlist.';
         }
-        return $response->withHeader('Location', '/wishlist/')->withStatus(302);
+        return $response->withHeader('Location', '/')->withStatus(302);
 
     }
+    
     public function removeFromWishlist(Request $request, Response $response)
     {
         $data = $request->getParsedBody();

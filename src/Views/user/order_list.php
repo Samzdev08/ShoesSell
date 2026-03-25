@@ -1,5 +1,3 @@
-
-
 <?php
 $statusConfig = [
     'en_attente' => ['class' => 'secondary', 'label' => 'En attente'],
@@ -36,24 +34,27 @@ $statusConfig = [
                         <?php foreach ($orders as $order):
                             $cfg = $statusConfig[$order['statut']] ?? ['class' => 'dark', 'label' => ucfirst($order['statut'])];
                         ?>
-                        <tr>
-                            <td class="ps-4 fw-semibold">#CMD-<?= $order['id'] ?></td>
-                            <td class="text-muted small align-middle">
-                                <?= (new DateTime($order['date_order']))->format('d.m.Y') ?>
-                            </td>
-                            <td class="text-muted small align-middle">
-                                <?= $order['nb_articles'] ?>
-                            </td>
-                            <td class="fw-semibold align-middle">
-                                <?= number_format($order['montant'], 2) ?> CHF
-                            </td>
-                            <td class="align-middle">
-                                <span class="badge bg-<?= $cfg['class'] ?>"><?= $cfg['label'] ?></span>
-                            </td>
-                            <td class="text-end pe-4 align-middle">
-                                <a href="/profil/orders/<?= $order['id'] ?>" class="btn btn-outline-dark btn-sm">Voir</a>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td class="ps-4 fw-semibold">#CMD-<?= $order['id'] ?></td>
+                                <td class="text-muted small align-middle">
+                                    <?= (new DateTime($order['date_order']))->format('d.m.Y') ?>
+                                </td>
+                                <td class="text-muted small align-middle">
+                                    <?= $order['nb_articles'] ?>
+                                </td>
+                                <td class="fw-semibold align-middle">
+                                    <?= number_format($order['montant'], 2) ?> CHF
+                                </td>
+                                <td class="align-middle">
+                                    <span class="badge bg-<?= $cfg['class'] ?>"><?= $cfg['label'] ?></span>
+                                </td>
+                                <td class="text-end pe-4 align-middle">
+                                    <a href="/commande/<?= $order['id'] ?>/facture" class="upload-pdf btn btn-outline-primary btn-sm">
+                                        <i class="fa-solid fa-file-upload"></i>
+                                    </a>
+                                    <a href="/profil/orders/<?= $order['id'] ?>" class="btn btn-outline-dark btn-sm">Voir</a>
+                                </td>
+                            </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>

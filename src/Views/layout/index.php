@@ -38,33 +38,39 @@ unset($_SESSION['flash']);
                         <li class="nav-item">
                             <a class="nav-link" href="/catalogue">Catalogue</a>
                         </li>
+                        <?php if (isset($_SESSION['user_id'])): ?>
 
-                        <?php if (isset($_SESSION['user_id'])) : ?>
+                            <?php if ($_SESSION['user_role'] === 'admin'): ?>
 
-                            <li class="nav-item">
-                                <a class="nav-link" href="/profil/">Mon compte</a>
-                            </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/admin/users">Dashboard Admin</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-danger" href="/auth/logout">Déconnexion</a>
+                                </li>
 
-                            <li class="nav-item">
-                                <a class="nav-link" href="/panier/">Panier</a>
-                            </li>
+                            <?php else: ?>
 
-                            <li class="nav-item">
-                                <a class="nav-link text-danger" href="/auth/logout">Déconnexion</a>
-                            </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/profil/">Mon compte</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/panier/">Panier</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-danger" href="/auth/logout">Déconnexion</a>
+                                </li>
+                            <?php endif; ?>
 
-                        <?php else : ?>
-
+                        <?php else: ?>
                             <li class="nav-item">
                                 <a class="nav-link" href="/auth/login">Connexion</a>
                             </li>
-
                             <li class="nav-item">
                                 <a class="btn btn-primary ms-2" href="/auth/register">Inscription</a>
                             </li>
 
-                        <?php endif ?>
-
+                        <?php endif; ?>
                     </ul>
                 </div>
             </div>
@@ -100,7 +106,8 @@ unset($_SESSION['flash']);
         <div class="container">
             <p class="mb-0">
                 &copy; 2024 ShoeSell. Tous droits réservés.
-                • <a href="/mentions-legales" class="text-white text-decoration-underline">Mentions légales</a>
+                • <a href="https://google.com" class="text-white text-decoration-underline">Mentions légales</a>
+                • <a href="mailto:admin@admin.com" class="text-white text-decoration-underline">📧 Service client</a>
             </p>
         </div>
     </footer>

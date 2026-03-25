@@ -149,4 +149,17 @@ class User
         return ['success' => false, 'message' => 'Erreur lors de la mise à jour du mot de passe.'];
     }
 
+    public static function deleteAccount(int $userId): bool
+    {
+        $pdo = Database::getInstance()->getConnection();
+
+        $stmt = $pdo->prepare("DELETE FROM commandes WHERE user_id = :id");
+        $stmt->execute([':id' => $userId]);
+
+        
+        $stmt = $pdo->prepare("DELETE FROM users WHERE id = :id");
+        $stmt->execute([':id' => $userId]);
+
+        return $stmt->rowCount() > 0;
+    }
 }

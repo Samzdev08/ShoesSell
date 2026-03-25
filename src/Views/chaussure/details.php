@@ -3,7 +3,7 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Accueil</a></li>
             <li class="breadcrumb-item"><a href="/catalogue" class="text-decoration-none">Catalogue</a></li>
-            <li class="breadcrumb-item"><a href="/catalogue/order=<?= $chaussure['categorie'] ?>" class="text-decoration-none"><?= $chaussure['categorie'] ?></a></li>
+            <li class="breadcrumb-item"><a href="/catalogue/<?= $chaussure['category_id'] ?>" class="text-decoration-none"><?= $chaussure['categorie'] ?></a></li>
             <li class="breadcrumb-item active"><?= $chaussure['nom'] ?></li>
         </ol>
     </nav>
@@ -31,14 +31,18 @@
 
                 <p class="fw-semibold mb-2">Sélectionner votre taille</p>
                 <ul class="list-unstyled d-flex flex-wrap gap-2 mb-4">
-                    <?php foreach ($sizes as $size): ?>
-                        <li>
-                            <input type="radio" name="taille" id="taille_<?= $size['taille'] ?>" value="<?= $size['taille'] ?>" class="d-none">
-                            <label for="taille_<?= $size['taille'] ?>" class="btn btn-outline-dark btn-sm">
-                                <?= $size['taille'] ?>
-                            </label>
-                        </li>
-                    <?php endforeach; ?>
+                    <?php if ($sizes): ?>
+                        <?php foreach ($sizes as $size): ?>
+                            <li>
+                                <input type="radio" name="taille" id="taille_<?= $size['taille'] ?>" value="<?= $size['taille'] ?>" class="d-none">
+                                <label for="taille_<?= $size['taille'] ?>" class="btn btn-outline-dark btn-sm">
+                                    <?= $size['taille'] ?>
+                                </label>
+                            </li>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p class="text-muted">Aucune taille disponible.</p>
+                    <?php endif; ?>
                 </ul>
 
                 <div class="d-flex align-items-center gap-3 mb-4">

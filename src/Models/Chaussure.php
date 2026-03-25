@@ -27,13 +27,36 @@ class Chaussure
     }
 
 
-    public static function getAll()
+    public static function getAll($limit = null, $category = null, $marque = null)
     {
+        $params = [];
         $db = Database::getInstance()->getConnection();
-        $stmt = $db->query('SELECT * FROM ' . self::$table . ' ORDER BY id DESC LIMIT 10');
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $sql = 'SELECT *, 
+        (SELECT COUNT(*) FROM taille_chaussure s 
+        WHERE s.chaussure_id = ' . self::$table . '.id 
+        AND s.stock >= 1) as en_stock
+        FROM ' . self::$table . ' WHERE 1=1';
 
-        return $results;
+        if ($category) {
+            $sql .= ' AND categorie_id = :category';
+            $params[':category'] = (int)$category;
+        }
+        if ($marque) {
+            $sql .= ' AND (marque LIKE :marque OR nom LIKE :marque1)';
+            $params[':marque'] = "%$marque%";
+            $params[':marque1'] = "%$marque%";
+        }
+
+        $sql .= ' ORDER BY created_at DESC';
+
+        if ($limit) {
+            $sql .= ' LIMIT :limit';
+            $params[':limit'] = (int)$limit;
+        }
+
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
 
@@ -51,12 +74,12 @@ class Chaussure
         return $result;
     }
 
-    public static function getList()
+
+    public static function getWishlistIds($user_id)
     {
         $db = Database::getInstance()->getConnection();
-        $stmt = $db->query('SELECT * FROM ' . self::$table . ' ORDER BY id DESC');
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return $results;
+        $stmt = $db->prepare('SELECT chaussure_id FROM wishlist WHERE user_id = :user_id');
+        $stmt->execute(['user_id' => $user_id]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN); // retourne [1, 3, 6, ...]
     }
 }

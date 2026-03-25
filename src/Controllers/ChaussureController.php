@@ -12,13 +12,24 @@ class ChaussureController
 {
     public function __invoke(Request $request, Response $response): Response
     {
-        $Allchaussures = Chaussure::getAll();
+        $marque = $_GET['marque'] ?? null;
+        $category = $_GET['category'] ?? null;
+
+        $Allchaussures = Chaussure::getAll(10, $category, $marque);
+
+        if ($_SESSION['user_id']) {
+
+            foreach ($Allchaussures as &$chaussure) {
+                $chaussure['in_wishlist'] = in_array($chaussure['id'], Chaussure::getWishlistIds($_SESSION['user_id']));
+            }
+        }
 
         $view = new PhpRenderer(__DIR__ . '/../Views/layout', [
             'title' => 'Accueil',
             'chaussures' => $Allchaussures,
+            'chaussureUser' => $chaussureUser ?? null,
         ]);
-          $view->setLayout('index.php');
+        $view->setLayout('index.php');
         return $view->render($response, 'home.php');
     }
 
@@ -38,19 +49,29 @@ class ChaussureController
             'chaussure' => $chaussure,
             'sizes' => $sizes,
         ]);
-          $view->setLayout('layout/index.php');
+        $view->setLayout('layout/index.php');
         return $view->render($response, 'chaussure/details.php');
     }
 
     public function list(Request $request, Response $response): Response
     {
-        $Allchaussures = Chaussure::getList();
+
+        $marque = $_GET['marque'] ?? null;
+        $category = $_GET['category'] ?? null;
+
+        $Allchaussures = Chaussure::getAll(null, $category, $marque);
+        if ($_SESSION['user_id']) {
+
+            foreach ($Allchaussures as &$chaussure) {
+                $chaussure['in_wishlist'] = in_array($chaussure['id'], Chaussure::getWishlistIds($_SESSION['user_id']));
+            }
+        }
 
         $view = new PhpRenderer(__DIR__ . '/../Views', [
             'title' => 'Catalogue',
             'chaussures' => $Allchaussures,
         ]);
-          $view->setLayout('layout/index.php');
+        $view->setLayout('layout/index.php');
         return $view->render($response, 'chaussure/list.php');
     }
 }

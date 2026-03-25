@@ -25,7 +25,7 @@ class UserController
             'stats' => $stats,
             'pendingOrders' => $pendingOrders,
             'recentOrders' => $recentOrders
-            
+
         ]);
         $view->setLayout('layout/index.php');
         return $view->render($response, 'user/compte.php');
@@ -67,16 +67,16 @@ class UserController
         $data = $request->getParsedBody();
         $id = $_SESSION['user_id'];
 
-        if(empty($data['nom']) || empty($data['prenom']) || empty($data['email']) || empty($data['adresse'])) {
+        if (empty($data['nom']) || empty($data['prenom']) || empty($data['email']) || empty($data['adresse'])) {
             $_SESSION['flash']['error'] = 'Tous les champs sont requis.';
             return $response->withHeader('Location', '/profil/')->withStatus(302);
         }
-        if(preg_match('/[0-9!@#$%^&*()-+]/', $data['nom']) || preg_match('/[0-9!@#$%^&*()-+]/', $data['prenom'])) {
+        if (preg_match('/[0-9!@#$%^&*()-+]/', $data['nom']) || preg_match('/[0-9!@#$%^&*()-+]/', $data['prenom'])) {
             $_SESSION['flash']['error'] = 'Le nom et le prénom ne doivent pas contenir de chiffres ou de caractères spéciaux.';
             return $response->withHeader('Location', '/profil/')->withStatus(302);
         }
 
-        if(!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
             $_SESSION['flash']['error'] = 'L\'adresse email n\'est pas valide.';
             return $response->withHeader('Location', '/profil/')->withStatus(302);
         }
@@ -91,17 +91,17 @@ class UserController
         $data = $request->getParsedBody();
         $id = $_SESSION['user_id'];
 
-        if(empty($data['current_password']) || empty($data['new_password']) || empty($data['confirm_password'])) {
+        if (empty($data['current_password']) || empty($data['new_password']) || empty($data['confirm_password'])) {
             $_SESSION['flash']['error'] = 'Tous les champs sont requis.';
             return $response->withHeader('Location', '/profil/')->withStatus(302);
         }
 
-        if($data['new_password'] !== $data['confirm_password']) {
+        if ($data['new_password'] !== $data['confirm_password']) {
             $_SESSION['flash']['error'] = 'Le nouveau mot de passe et la confirmation ne correspondent pas.';
             return $response->withHeader('Location', '/profil/')->withStatus(302);
         }
 
-        if(strlen($data['new_password']) < 6) {
+        if (strlen($data['new_password']) < 6) {
             $_SESSION['flash']['error'] = 'Le nouveau mot de passe doit contenir au moins 6 caractères.';
             return $response->withHeader('Location', '/profil/')->withStatus(302);
         }
@@ -117,5 +117,20 @@ class UserController
         return $response->withHeader('Location', '/profil/')->withStatus(302);
     }
 
-    
+    public function deleteAccount(Request $request, Response $response): Response
+    {
+        $userId = $_SESSION['user_id'];
+
+        $deleted = User::deleteAccount($userId);
+
+        if ($deleted) {
+            
+            session_destroy();
+            $_SESSION['flash']['success'] = 'Compte supprimée avec succès';
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
+
+        $_SESSION['flash']['error'] = 'Erreur lors de la suppression du compte.';
+        return $response->withHeader('Location', '/profil/')->withStatus(302);
+    }
 }

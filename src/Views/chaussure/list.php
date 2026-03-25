@@ -6,27 +6,35 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title fw-bold mb-3">Catégorie</h5>
-                    <ul class="list-unstyled mb-0">
-                        <li><a class="filter d-block py-1 text-decoration-none text-dark" value="all">Toutes les catégories</a></li>
-                        <li><a class="filter d-block py-1 text-decoration-none text-dark" value="running">Running</a></li>
-                        <li><a class="filter d-block py-1 text-decoration-none text-dark" value="casual">Casual</a></li>
-                        <li><a class="filter d-block py-1 text-decoration-none text-dark" value="formal">Formal</a></li>
-                        <li><a class="filter d-block py-1 text-decoration-none text-dark" value="sport">Sport</a></li>
-                        <li><a class="filter d-block py-1 text-decoration-none text-dark" value="skate">Skate</a></li>
-                        <li><a class="filter d-block py-1 text-decoration-none text-dark" value="basketball">Basketball</a></li>
-                        <li><a class="filter d-block py-1 text-decoration-none text-dark" value="trail">Trail</a></li>
-                        <li><a class="filter d-block py-1 text-decoration-none text-dark" value="tennis">Tennis</a></li>
-                    </ul>
+                    <form method="GET" action="/catalogue">
+                        <select name="category" class="form-select mb-3" >
+                            <option value="">Toutes les catégories</option>
+                            <option value="1" <?= ($category == 1) ? 'selected' : '' ?>>Running</option>
+                            <option value="2" <?= ($category == 2) ? 'selected' : '' ?>>Sneakers</option>
+                            <option value="3" <?= ($category == 3) ? 'selected' : '' ?>>Skate</option>
+                            <option value="4" <?= ($category == 4) ? 'selected' : '' ?>>Basketball</option>
+                            <option value="5" <?= ($category == 5) ? 'selected' : '' ?>>Trail</option>
+                            <option value="6" <?= ($category == 6) ? 'selected' : '' ?>>Tennis</option>
+                        </select>
+
+                        <div class="input-group mb-3">
+                            <input
+                                type="text"
+                                name="marque"
+                                class="form-control"
+                                placeholder="Rechercher une marque..."
+                                value="<?= htmlspecialchars($_GET['marque'] ?? '') ?>">
+                            <button type="submit" class="btn btn-dark">🔍</button>
+                        </div>
+
+                        <a href="/catalogue" class="btn btn-outline-secondary w-100">✕ Réinitialiser</a>
+                    </form>
                 </div>
             </div>
         </div>
 
         <div class="col-md-9">
-            <div class="d-flex justify-content-between align-items-center mb-4 gap-3">
-                <div class="input-group w-50">
-                    <input type="text" class="form-control" placeholder="Rechercher...">
-                    <button class="btn btn-outline-secondary search">🔍</button>
-                </div>
+            <div class="d-flex justify-content-end align-items-center mb-4">
                 <p class="mb-0 text-muted"><?= count($chaussures) ?> résultat(s)</p>
             </div>
 
@@ -72,6 +80,7 @@
 
     </div>
 </div>
+
 <script>
     document.querySelectorAll('.chaussure-item').forEach(item => {
         item.addEventListener('click', () => {

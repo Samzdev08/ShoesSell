@@ -17,6 +17,14 @@ class AuthMiddleware
             return $response->withHeader('Location', '/auth/login')->withStatus(302);
         }
 
+        
+
+        if ($_SESSION['user_role'] === 'admin') {
+            $_SESSION['flash']['error'] = 'Vous etes admin t\'a pas le droit mon reuf.';
+            $response = new SlimResponse();
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
+
         return $handler->handle($request);
     }
 }

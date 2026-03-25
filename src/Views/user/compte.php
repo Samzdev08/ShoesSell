@@ -33,6 +33,13 @@
                     <a href="/profil/orders" class="btn btn-outline-dark btn-sm">📦 Mes commandes</a>
                     <a href="/wishlist/" class="btn btn-outline-dark btn-sm">❤️ Ma wishlist</a>
                     <a href="/catalogue" class="btn btn-dark btn-sm">👟 Catalogue</a>
+
+                    <form method="POST" action="/profil/delete">
+                        <button type="submit" class="btn btn-outline-danger btn-sm mt-2 w-100">
+                            🗑️ Supprimer mon compte
+                        </button>
+                    </form>
+
                 </div>
             </div>
         </div>
@@ -108,9 +115,6 @@
                                 <a href="/profil/orders" class="btn btn-outline-dark btn-sm">Tous voir →</a>
                             </div>
 
-                            <span class="badge bg-<?= $class ?>">
-                                <?= $order['statut'] ?>
-                            </span>
                             <?php if ($recentOrders): ?>
                                 <?php foreach ($recentOrders as $order): ?>
 
@@ -146,7 +150,7 @@
 
                                         <span class="fw-semibold ms-auto"><?= $order['montant'] ?> CHF</span>
 
-                                        <a href="#" class="upload-pdf btn btn-outline-primary btn-sm">
+                                        <a href="/commande/<?= $order['id'] ?>/facture" class="upload-pdf btn btn-outline-primary btn-sm">
                                             <i class="fa-solid fa-file-upload"></i>
                                         </a>
 

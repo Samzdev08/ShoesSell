@@ -8,7 +8,7 @@
                     <p class="lead text-secondary mb-4">Découvrez notre dernière collection de chaussures conçues pour vous offrir le confort et la performance dont vous avez besoin.</p>
                     <div class="d-flex gap-3">
                         <a href="/catalogue" class="btn btn-primary btn-lg">Voir la collection</a>
-                        <a href="/register" class="btn btn-outline-light btn-lg">Créer un compte</a>
+                        <a href="/auth/register" class="btn btn-outline-light btn-lg">Créer un compte</a>
                     </div>
                 </div>
                 <div class="col-md-4 text-center d-none d-md-block">
@@ -19,15 +19,20 @@
     </div>
 
     <div class="container mb-5">
-        <ul class="nav gap-2 mb-4">
-            <li class="nav-item"><a class="btn btn-outline-secondary btn-sm" value="all">Tous voir</a></li>
-            <li class="nav-item"><a class="btn btn-outline-secondary btn-sm" value="Running">Running</a></li>
-            <li class="nav-item"><a class="btn btn-outline-secondary btn-sm" value="Sneakers">Sneakers</a></li>
-            <li class="nav-item"><a class="btn btn-outline-secondary btn-sm" value="Skate">Skate</a></li>
-            <li class="nav-item"><a class="btn btn-outline-secondary btn-sm" value="Basketball">Basketball</a></li>
-            <li class="nav-item"><a class="btn btn-outline-secondary btn-sm" value="Trail">Trail</a></li>
-            <li class="nav-item"><a class="btn btn-outline-secondary btn-sm" value="Tennis">Tennis</a></li>
-        </ul>
+        <form method="GET" action="/" class="d-flex align-items-center gap-2 mb-4">
+
+            <select name="category" class="form-select w-auto" onchange="this.form.submit()">
+                <option value="">Toutes les catégories</option>
+                <option value="1">Running</option>
+                <option value="2">Sneakers</option>
+                <option value="3">Skate</option>
+                <option value="4">Basketball</option>
+                <option value="5">Trail</option>
+                <option value="6">Tennis</option>
+            </select>
+
+            <a href="/" class="btn btn-outline-secondary">✕ Réinitialiser</a>
+        </form>
 
         <h3 class="fw-semibold mb-4">Découvrez notre sélection de chaussures de qualité.</h3>
 
@@ -43,8 +48,7 @@
                                     <input type="hidden" name="chaussure_id" value="<?= $chaussure['id'] ?>">
                                     <button type="submit"
                                         class="btn btn-sm border-0 p-1 wishlist-btn"
-                                        onclick="event.stopPropagation()"
-                                        title="<?= $chaussure['in_wishlist'] ? 'Retirer de la wishlist' : 'Ajouter à la wishlist' ?>">
+                                        onclick="event.stopPropagation()">
                                         <i class="fa-<?= $chaussure['in_wishlist'] ? 'solid' : 'regular' ?> fa-heart"
                                             style="color: <?= $chaussure['in_wishlist'] ? '#dc3545' : '#adb5bd' ?>; font-size: 1.1rem;"></i>
                                     </button>
@@ -55,7 +59,7 @@
                                 <p class="card-text text-muted"><?= $chaussure['nom'] ?></p>
                                 <p class="card-text fw-semibold"><?= $chaussure['prix'] ?> .-</p>
                                 <p class="card-text">
-                                    <?php if ($chaussure['en_stock']): ?>
+                                    <?php if ($chaussure['en_stock'] >= 1): ?>
                                         <span class="text-success">● En stock</span>
                                     <?php else: ?>
                                         <span class="text-danger">● En rupture de stock</span>
