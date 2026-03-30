@@ -44,7 +44,7 @@ CREATE TABLE chaussures (
     PRIMARY KEY (id),
     CONSTRAINT fk_chaussure_categorie
         FOREIGN KEY (categorie_id) REFERENCES categories(id)
-        ON DELETE RESTRICT ON UPDATE CASCADE
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- ─────────────────────────────────────────
@@ -74,7 +74,7 @@ CREATE TABLE commandes (
     PRIMARY KEY (id),
     CONSTRAINT fk_commande_user
         FOREIGN KEY (user_id) REFERENCES users(id)
-        ON DELETE RESTRICT ON UPDATE CASCADE
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- ─────────────────────────────────────────
@@ -93,7 +93,7 @@ CREATE TABLE commande_items (
         ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_item_chaussure
         FOREIGN KEY (chaussure_id) REFERENCES chaussures(id)
-        ON DELETE RESTRICT ON UPDATE CASCADE
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- ─────────────────────────────────────────

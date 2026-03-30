@@ -5,57 +5,52 @@ namespace App\Controllers;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\PhpRenderer;
-
 use App\Models\User;
+use App\Models\Email;
 
 class AuthController
 {
-    public function renderResponse(Response $response, string $error, array $old_post = [], string $file =  'register')
+    private Email $emailService;
+
+    public function __construct(Email $emailService)
+    {
+        $this->emailService = $emailService;
+    }
+
+    public function renderResponse(Response $response, string $error, array $old_post = [], string $file = 'register'): Response
     {
         $view = new PhpRenderer(__DIR__ . '/../Views', [
-            'title' => 'Inscription',
-            'error' => $error ?? null,
+            'title'    => 'Inscription',
+            'error'    => $error ?? null,
             'old_post' => $old_post,
         ]);
         $view->setLayout('layout/index.php');
-        return $view->render($response, 'auth/' .$file. '.php');
+        return $view->render($response, 'auth/' . $file . '.php');
     }
 
-    public function showLoginForm(Request $request, Response $response)
+    public function showLoginForm(Request $request, Response $response): Response
     {
-
-        $view = new PhpRenderer(__DIR__ . '/../Views', [
-            'title' => 'Connexion',
-        ]);
+        $view = new PhpRenderer(__DIR__ . '/../Views', ['title' => 'Connexion']);
         $view->setLayout('layout/index.php');
         return $view->render($response, 'auth/login.php');
     }
 
-    public function showRegisterForm(Request $request, Response $response)
+    public function showRegisterForm(Request $request, Response $response): Response
     {
-        $view = new PhpRenderer(__DIR__ . '/../Views', [
-            'title' => 'Inscription',
-        ]);
+        $view = new PhpRenderer(__DIR__ . '/../Views', ['title' => 'Inscription']);
         $view->setLayout('layout/index.php');
         return $view->render($response, 'auth/register.php');
     }
 
-    public function login(Request $request, Response $response)
+    public function login(Request $request, Response $response): Response
     {
         $data = filter_input_array(INPUT_POST, [
-            'email' => FILTER_SANITIZE_EMAIL,
+            'email'    => FILTER_SANITIZE_EMAIL,
             'password' => FILTER_SANITIZE_SPECIAL_CHARS,
         ]);
 
-        $errors = [];
-
         if (empty($data['email']) || empty($data['password'])) {
-            $errors[] = 'Tous les champs sont obligatoires.';
-        }
-
-        if (!empty($errors)) {
-
-           return $this->renderResponse($response, $errors[0], $_POST, 'login');
+            return $this->renderResponse($response, 'Tous les champs sont obligatoires.', $_POST, 'login');
         }
 
         $loginResult = User::login($data);
@@ -64,31 +59,35 @@ class AuthController
             return $this->renderResponse($response, $loginResult['message'], $_POST, 'login');
         }
 
-        $_SESSION['user_id'] = $loginResult['user']['id'];
-        $_SESSION['user_role'] = $loginResult['user']['role'];
+        $_SESSION['user_id']          = $loginResult['user']['id'];
+        $_SESSION['user_role']        = $loginResult['user']['role'];
         $_SESSION['flash']['success'] = 'Vous êtes connecté avec succès.';
+
         return $response->withHeader('Location', '/')->withStatus(302);
     }
 
-    public function register(Request $request, Response $response)
+    public function register(Request $request, Response $response): Response
     {
         $data = filter_input_array(INPUT_POST, [
-            'nom' => FILTER_SANITIZE_SPECIAL_CHARS,
-            'prenom' => FILTER_SANITIZE_SPECIAL_CHARS,
-            'adresse' => FILTER_SANITIZE_SPECIAL_CHARS,
-            'email' => FILTER_SANITIZE_EMAIL,
-            'password' => FILTER_SANITIZE_SPECIAL_CHARS,
+            'nom'             => FILTER_SANITIZE_SPECIAL_CHARS,
+            'prenom'          => FILTER_SANITIZE_SPECIAL_CHARS,
+            'adresse'         => FILTER_SANITIZE_SPECIAL_CHARS,
+            'email'           => FILTER_SANITIZE_EMAIL,
+            'password'        => FILTER_SANITIZE_SPECIAL_CHARS,
             'password_verify' => FILTER_SANITIZE_SPECIAL_CHARS,
         ]);
 
         $errors = [];
 
-        if (empty($data['nom']) || empty($data['prenom']) || empty($data['adresse']) || empty($data['email']) || empty($data['password']) || empty($data['password_verify'])) {
+        if (
+            empty($data['nom']) || empty($data['prenom']) || empty($data['adresse']) ||
+            empty($data['email']) || empty($data['password']) || empty($data['password_verify'])
+        ) {
             $errors[] = 'Tous les champs sont obligatoires.';
         }
 
         if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'L\'adresse email n\'est pas valide.';
+            $errors[] = "L'adresse email n'est pas valide.";
         }
 
         if (strlen($data['password']) < 6) {
@@ -107,39 +106,36 @@ class AuthController
             $errors[] = 'Les mots de passe ne correspondent pas.';
         }
 
-
         if (!empty($errors)) {
             return $this->renderResponse($response, $errors[0], $_POST);
         }
-
 
         if (User::verifyEmail($data['email'])) {
             return $this->renderResponse($response, 'Cette adresse email est déjà utilisée.', $_POST);
         }
 
-
         $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
-        $lastInsertId = User::create($data);
-
+        $lastInsertId     = User::create($data);
 
         if (!$lastInsertId) {
             return $this->renderResponse($response, 'Une erreur est survenue lors de la création du compte.', $_POST);
         }
 
+        $isOk = $this->emailService->sendWelcomeEmail($data['email'], $data['prenom'], $data['nom']);
 
-        $_SESSION['flash']['success'] = 'Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter.';
+        if (!$isOk) {
+            $_SESSION['flash']['error'] = 'Votre compte a été créé, mais nous n\'avons pas pu envoyer l\'email de bienvenue.';
+        } else {
+            $_SESSION['flash']['success'] = 'Votre compte a été créé avec succès. Un email de bienvenue vous a été envoyé.';
+        }
         return $response->withHeader('Location', '/auth/login')->withStatus(302);
     }
 
-
-    public function logout(Request $request, Response $response)
+    public function logout(Request $request, Response $response): Response
     {
-
-        $_SESSION['flash']['success'] = 'Vous avez été déconnecté avec succès.';
         session_destroy();
         session_start();
         $_SESSION['flash']['success'] = 'Vous avez été déconnecté avec succès.';
         return $response->withHeader('Location', '/')->withStatus(302);
     }
-
 }

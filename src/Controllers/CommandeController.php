@@ -9,6 +9,7 @@ use App\Models\Commande;
 use App\Models\CommandeItem;
 use App\Models\User;
 use Dompdf\Dompdf;
+use App\Models\Email;
 use Dompdf\Options;
 
 class CommandeController
@@ -63,11 +64,24 @@ class CommandeController
                 'quantite'     => $item['quantite'],
                 'prix'         => (float) $item['prix'],
             ], $commandeId);
-        }
+        };
+
+        $user = User::find($_SESSION['user_id']);
+
+        $email = new Email();
+        $email->sendOrderConfirmationEmail(
+            $user['email'],
+            $user['prenom'],
+            $user['nom'],
+            $commandeId,
+            $data['cart'],
+            $data['total']
+        );
 
 
         $_SESSION['cart'] = [];
-        $_SESSION['flash']['success'] = 'Votre commande a été passée avec succès !';
+        $_SESSION['flash']['success'] = 'Votre commande a été passée avec succès ! Un email de confirmation vous a été envoyé.';
+
         return $response->withHeader('Location', '/')->withStatus(302);
     }
 

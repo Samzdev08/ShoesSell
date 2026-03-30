@@ -45,7 +45,10 @@
                                             <span class="badge bg-dark"><?= $item['taille'] ?></span>
                                         </td>
                                         <td>
-                                            <input type="number" name="quantite" value="<?= $item['quantite'] ?>" min="1" class="form-control form-control-sm" style="width: 70px;">
+                                            <form action="/panier/maj" method="post">
+                                                <input type="hidden" name="id" value="<?= $i ?>">
+                                                <input type="number" name="quantite" value="<?= $item['quantite'] ?>" min="1" max="5" class="form-control form-control-sm" style="width: 70px;" onchange="this.form.submit()" onkeydown="return false;">
+                                            </form>
                                         </td>
                                         <td class="fw-semibold">
                                             <?= $item['prix'] * $item['quantite'] ?> CHF
@@ -60,7 +63,7 @@
                     </div>
                     <div class="card-footer bg-white d-flex justify-content-end gap-2">
                         <a href="/panier/vider" class="btn btn-outline-secondary btn-sm btn-clear">Vider le panier</a>
-                        <button type="submit" class="btn btn-outline-primary btn-sm">Mettre à jour</button>
+                        
                     </div>
                 </div>
             </div>

@@ -1,7 +1,30 @@
 <?php
-require __DIR__ . '/../vendor/autoload.php';
-use Slim\Factory\AppFactory;
 
+require __DIR__ . '/../vendor/autoload.php';
+
+use Slim\Factory\AppFactory;
+use DI\ContainerBuilder;
+use App\Models\Email;
+use App\Controllers\AuthController;
+
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
+
+
+$containerBuilder = new ContainerBuilder();
+$containerBuilder->addDefinitions([
+
+    Email::class => \DI\create(Email::class),
+
+    AuthController::class => \DI\create(AuthController::class)
+        ->constructor(\DI\get(Email::class)),
+
+]);
+$container = $containerBuilder->build();
+
+
+AppFactory::setContainer($container);
 $app = AppFactory::create();
 
 $errorMiddleware = $app->addErrorMiddleware(true, true, true);
@@ -14,5 +37,7 @@ $errorMiddleware->setErrorHandler(
 );
 
 $app->add(\App\Middleware\SessionMiddleware::class);
+
 require __DIR__ . '/../config/routes.php';
+
 $app->run();

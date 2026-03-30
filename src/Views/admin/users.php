@@ -94,7 +94,7 @@
                                 </td>
                                 <td>
                                     <!-- SELECT AUTO-SUBMIT sans bouton -->
-                                    <form method="POST" action="/admin/commandes/<?= $commande['commande_id'] ?>/statut">
+                                    <form method="POST" action="/admin/commandes/<?= $commande['commande_id'] ?>/<?= $commande['user_id'] ?>/statut">
                                         <select 
                                             name="statut" 
                                             class="form-select form-select-sm"

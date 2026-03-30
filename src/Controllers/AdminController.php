@@ -5,6 +5,9 @@ namespace App\Controllers;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\PhpRenderer;
+use App\Models\Commande;
+use App\Models\User;
+use App\Models\Email;
 use App\Models\Admin;
 
 class AdminController
@@ -28,11 +31,25 @@ class AdminController
     public function updateOrderStatus(Request $request, Response $response, array $args)
     {
         $commandeId = (int) $args['id'];
+        $userId    = (int) $args['user_id'];
         $data       = $request->getParsedBody();
-
-        $updated = Admin::updateOrderStatus($commandeId, $data['statut']);
+        $updated    = Admin::updateOrderStatus($commandeId, $data['statut']);
 
         if ($updated) {
+
+
+            $user = User::find($userId);
+
+
+            $email = new Email();
+            $email->sendOrderStatusEmail(
+                $user['email'],
+                $user['prenom'],
+                $user['nom'],
+                $commandeId,
+                $data['statut']
+            );
+
             $_SESSION['flash']['success'] = 'Statut de la commande mis à jour avec succès.';
         } else {
             $_SESSION['flash']['error'] = 'Erreur lors de la mise à jour du statut.';
@@ -61,6 +78,7 @@ class AdminController
         $userId = (int) $args['id'];
 
         $deleted = Admin::deleteUser($userId);
+
 
         if ($deleted) {
             $_SESSION['flash']['success'] = 'Utilisateur supprimé avec succès.';

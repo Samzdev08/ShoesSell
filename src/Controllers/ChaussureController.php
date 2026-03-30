@@ -59,7 +59,7 @@ class ChaussureController
         $marque = $_GET['marque'] ?? null;
         $category = $_GET['category'] ?? null;
 
-        $Allchaussures = Chaussure::getAll(null, $category, $marque);
+        $Allchaussures = Chaussure::getAll(20, $category, $marque);
         if ($_SESSION['user_id']) {
 
             foreach ($Allchaussures as &$chaussure) {

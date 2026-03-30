@@ -27,7 +27,7 @@
                 <input type="hidden" name="prix" value="<?= $chaussure['prix'] ?>">
                 <input type="hidden" name="nom" value="<?= $chaussure['nom'] ?>">
                 <input type="hidden" name="marque" value="<?= $chaussure['marque'] ?>">
-                <input type="hidden" name="quantite" value="<?= $chaussure['quantite'] ?>">
+                <input type="hidden" name="quantite" value="<?= $chaussure['quantite'] ?>" >
 
                 <p class="fw-semibold mb-2">Sélectionner votre taille</p>
                 <ul class="list-unstyled d-flex flex-wrap gap-2 mb-4">
@@ -46,7 +46,7 @@
                 </ul>
 
                 <div class="d-flex align-items-center gap-3 mb-4">
-                    <input type="number" name="quantite" min="1" value="1" class="form-control w-25">
+                    <input type="number" name="quantite" min="1" max="5" value="1" class="form-control w-25" onkeydown="return false;">
                     <button type="submit" class="btn btn-dark btn-lg flex-grow-1">🛒 Ajouter au panier</button>
                 </div>
             </form>

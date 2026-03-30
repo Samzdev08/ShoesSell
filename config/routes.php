@@ -26,6 +26,7 @@ $group = $app->group('/auth', function ($group) {
 
 $group = $app->group('/panier', function ($group) {
     $group->post('/ajouter', [PanierController::class, 'addCart']);
+     $group->post('/maj', [PanierController::class, 'Maj']);
     $group->get('/', [PanierController::class, 'viewCart']);
     $group->get('/remove/{id}', [PanierController::class, 'removeFromCart']);
     $group->get('/vider', [PanierController::class, 'clearCart']);
@@ -55,7 +56,7 @@ $group = $app->group('/wishlist', function ($group) {
 
 $app->group('/admin', function ($group) {
     $group->get('/users', [AdminController::class, 'getAllUsers']);
-    $group->post('/commandes/{id}/statut', [AdminController::class, 'updateOrderStatus']);
+    $group->post('/commandes/{id}/{user_id}/statut', [AdminController::class, 'updateOrderStatus']);
     $group->get('/commandes/{id}/items', [AdminController::class, 'getOrderItems']);
-    $group->post('/admin/users/{id}/delete', [AdminController::class, 'deleteUser']);
+    $group->post('/users/{id}/delete', [AdminController::class, 'deleteUser']);
 })->add(new App\Middleware\AuthAdminMiddleware());

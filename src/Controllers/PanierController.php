@@ -22,6 +22,7 @@ class PanierController
         if ($data['quantite'] <= 0) {
             $errors[] = 'La quantité doit être supérieure à zéro.';
         }
+
         if ($data['taille'] == '' || $data['taille'] == null) {
             $errors[] = 'Veuillez sélectionner une taille.';
         }
@@ -66,7 +67,8 @@ class PanierController
         return $response->withHeader('Location', '/panier/')->withStatus(302);
     }
 
-    public function removeFromCart(Request $request, Response $response, $args){
+    public function removeFromCart(Request $request, Response $response, $args)
+    {
 
         $id = $args['id'];
         unset($_SESSION['cart'][$id]);
@@ -74,4 +76,27 @@ class PanierController
         return $response->withHeader('Location', '/panier/')->withStatus(302);
     }
 
+    public function Maj(Request $request, Response $response)
+    {
+
+        $data = $request->getParsedBody();
+        $newQuantite = $data['quantite'];
+
+        if ($newQuantite >= 5) {
+
+            $_SESSION['flash']['error'] = 'Cheh.';
+            return $response->withHeader('Location', '/panier/')->withStatus(302);
+        }
+
+        $i = $data['id'];
+
+        foreach ($_SESSION['cart'] as &$item) {
+
+
+            $_SESSION['cart'][$i]['quantite'] = $newQuantite;
+        }
+
+        $_SESSION['flash']['success'] = 'Quantité modifiée avec succès.';
+        return $response->withHeader('Location', '/panier/')->withStatus(302);
+    }
 }
