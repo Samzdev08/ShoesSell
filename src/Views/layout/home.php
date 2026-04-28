@@ -54,7 +54,7 @@
                                     </button>
                                 </form>
 
-                                <div class="fs-1 mb-3">👟</div>
+                                <img src="<?= $chaussure['image'] ?>" alt="<?= htmlspecialchars($chaussure['nom']) ?>" class="card-img-top mb-3" style="height: 200px; object-fit: cover;">
                                 <h5 class="card-title fw-bold"><?= $chaussure['marque'] ?></h5>
                                 <p class="card-text text-muted"><?= $chaussure['nom'] ?></p>
                                 <p class="card-text fw-semibold"><?= $chaussure['prix'] ?> .-</p>

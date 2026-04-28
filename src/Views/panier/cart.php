@@ -34,7 +34,7 @@
                                     <tr class="border-top">
                                         <td class="ps-4">
                                             <div class="d-flex align-items-center gap-3">
-                                                <div class="fs-2">👟</div>
+                                                <img src="<?= $item['image'] ?>" alt=" <?= htmlspecialchars($item['nom']) ?>" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
                                                 <div>
                                                     <p class="fw-semibold mb-0"><?= $item['marque'] ?> - <?= $item['nom'] ?></p>
                                                     <small class="text-muted">Prix unitaire : <?= $item['prix'] ?> CHF</small>

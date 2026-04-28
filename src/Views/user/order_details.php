@@ -1,4 +1,3 @@
-
 <?php
 $statusConfig = [
     'en_attente' => ['class' => 'secondary', 'label' => 'En attente'],
@@ -33,13 +32,16 @@ $cfg = $statusConfig[$order['statut']] ?? ['class' => 'dark', 'label' => ucfirst
 
                     <?php foreach ($items as $i => $item): ?>
                         <div class="d-flex justify-content-between align-items-center py-2 <?= $i < count($items) - 1 ? 'border-bottom' : '' ?>">
-                            <div>
-                                <p class="fw-semibold mb-0"><?= $item['chaussure_marque'] ?></p>
-                                <p class="text-muted small mb-0">
-                                    <?= $item['chaussure_nom'] ?> &middot;
-                                    Taille EU <?= number_format($item['taille'], 0) ?> &middot;
-                                    Qté <?= $item['quantite'] ?>
-                                </p>
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="<?= $item['chaussure_image'] ?>" alt=" Image de <?= $item['chaussure_nom'] ?>" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
+                                <div>
+                                    <p class="fw-semibold mb-0"><?= $item['chaussure_marque'] ?></p>
+                                    <p class="text-muted small mb-0">
+                                        <?= $item['chaussure_nom'] ?> &middot;
+                                        Taille EU <?= number_format($item['taille'], 0) ?> &middot;
+                                        Qté <?= $item['quantite'] ?>
+                                    </p>
+                                </div>
                             </div>
                             <span class="fw-semibold"><?= number_format($item['prix'] * $item['quantite'], 2) ?> CHF</span>
                         </div>

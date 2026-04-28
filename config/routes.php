@@ -26,7 +26,7 @@ $group = $app->group('/auth', function ($group) {
 
 $group = $app->group('/panier', function ($group) {
     $group->post('/ajouter', [PanierController::class, 'addCart']);
-     $group->post('/maj', [PanierController::class, 'Maj']);
+    $group->post('/maj', [PanierController::class, 'Maj']);
     $group->get('/', [PanierController::class, 'viewCart']);
     $group->get('/remove/{id}', [PanierController::class, 'removeFromCart']);
     $group->get('/vider', [PanierController::class, 'clearCart']);
@@ -51,12 +51,16 @@ $group = $app->group('/wishlist', function ($group) {
     $group->get('/', [WishlistController::class, 'wishlist']);
     $group->post('/add', [WishlistController::class, 'addToWishlist']);
     $group->post('/remove', [WishlistController::class, 'removeFromWishlist']);
-
 })->add(new App\Middleware\AuthMiddleware());
 
 $app->group('/admin', function ($group) {
     $group->get('/users', [AdminController::class, 'getAllUsers']);
+    $group->get('/chaussures', [AdminController::class, 'showShoesList']);
+    $group->post('/chaussures/create', [AdminController::class, 'addShoesForm']);
     $group->post('/commandes/{id}/{user_id}/statut', [AdminController::class, 'updateOrderStatus']);
     $group->get('/commandes/{id}/items', [AdminController::class, 'getOrderItems']);
+    $group->post('/chaussures/delete/{id}', [AdminController::class, 'deleteShoes']);
+    $group->get('/chaussures/edit/{id}', [AdminController::class, 'updateForm']);
+    $group->post('/chaussures/edit/{id}', [AdminController::class, 'updateFormPost']);
     $group->post('/users/{id}/delete', [AdminController::class, 'deleteUser']);
 })->add(new App\Middleware\AuthAdminMiddleware());

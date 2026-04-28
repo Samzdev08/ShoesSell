@@ -1,5 +1,8 @@
 <div class="container py-5">
     <h1 class="fw-bold mb-4">🛠️ Dashboard Admin</h1>
+    <div>
+        <a href="/admin/chaussures" class="btn btn-outline-dark me-2 mb-3">📦 Gérer les chaussures</a>
+    </div>
 
     <!-- STATS CARDS -->
     <div class="row g-4 mb-5">

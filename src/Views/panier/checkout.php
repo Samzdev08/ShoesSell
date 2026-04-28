@@ -48,7 +48,7 @@
 
                     <?php foreach ($cart as $item) : ?>
                         <div class="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom">
-                            <div class="fs-3">👟</div>
+                             <img src="<?= $item['image'] ?>" alt=" <?= htmlspecialchars($item['nom']) ?>" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
                             <div class="flex-grow-1">
                                 <p class="fw-semibold mb-0"><?= $item['marque'] ?> - <?= $item['nom'] ?></p>
                                 <small class="text-muted">Taille <?= $item['taille'] ?> × <?= $item['quantite'] ?></small>

@@ -45,7 +45,7 @@ class CommandeItem
     public static function getItemsByCommandeId($commande_id)
     {
         $db = Database::getInstance()->getConnection();
-        $stmt = $db->prepare('SELECT ci.*, c.nom AS chaussure_nom, c.marque AS chaussure_marque
+        $stmt = $db->prepare('SELECT ci.*, c.nom AS chaussure_nom, c.marque AS chaussure_marque, c.image AS chaussure_image
                               FROM commande_items ci
                               JOIN chaussures c ON ci.chaussure_id = c.id
                               WHERE ci.commande_id = :commande_id');

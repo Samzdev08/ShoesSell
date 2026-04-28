@@ -15,8 +15,6 @@ class PanierController
 
         $data = $request->getParsedBody();
 
-
-
         $errors = [];
 
         if ($data['quantite'] <= 0) {
@@ -36,6 +34,7 @@ class PanierController
         $product = [
             'id' => $data['chaussure_id'],
             'nom' => $data['nom'],
+            'image' => $data['image'],
             'prix' => $data['prix'],
             'taille' => $data['taille'],
             'marque' => $data['marque'],
